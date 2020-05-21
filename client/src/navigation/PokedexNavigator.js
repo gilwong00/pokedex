@@ -6,6 +6,7 @@ import { createDrawerNavigator } from 'react-navigation-drawer';
 import CapturedScreen from '../screens/CapturedScreen';
 import KantoScreen from '../screens/KantoScreen';
 import JohtoScreen from '../screens/JohtoScreen';
+import HomeScreen from '../screens/HomeScreen';
 
 const defaultNavigationOptions = {
   headerStyle: {
@@ -19,7 +20,7 @@ const CapturedNavigator = createStackNavigator(
     Captured: CapturedScreen,
   },
   {
-		defaultNavigationOptions,
+    defaultNavigationOptions,
   }
 );
 
@@ -37,12 +38,23 @@ const JohtoNavigator = createStackNavigator(
   { defaultNavigationOptions }
 );
 
-const MainNavigator = createDrawerNavigator({
-  'My Pokemon': CapturedNavigator,
-  Kanto: KantoNavigator,
-  Johto: JohtoNavigator,
-}, {
-	defaultNavigationOptions
-});
+const HomeNavigator = createStackNavigator(
+  {
+    Home: HomeScreen,
+  },
+  { defaultNavigationOptions }
+);
+
+const MainNavigator = createDrawerNavigator(
+  {
+    Home: HomeNavigator,
+    'My Pokemon': CapturedNavigator,
+    Kanto: KantoNavigator,
+    Johto: JohtoNavigator,
+  },
+  {
+    defaultNavigationOptions,
+  }
+);
 
 export default createAppContainer(MainNavigator);

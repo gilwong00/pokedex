@@ -1,7 +1,7 @@
 import React from 'react';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { StyleSheet, Text, View, Platform } from 'react-native';
-import CustomHeaderButton from '../components/CustomHeaderButton';
+import CustomHeaderButton from '../components/UI/CustomHeaderButton';
 
 const CapturedScreen = ({ navigation }) => {
   return (
