@@ -1,12 +1,16 @@
 const axios = require('axios');
 const Pokedex = require('pokedex-promise-v2');
 const redis = require('redis');
+const { promisify } = require('util');
 const P = new Pokedex();
 
 const client = redis.createClient({
   host: process.env.REDIS_HOST,
   port: process.env.REDIS_PORT,
 });
+
+const redisGet = promisify(client.get).bind(client);
+const redisSet = promisify(client.set).bind(client);
 
 const BASE_URL = 'https://pokeapi.co/api/v2/pokemon';
 const BASE_POKEMON_IMAGE_URL =
@@ -27,6 +31,7 @@ function padId(id) {
 module.exports = {
   Query: {
     fetchPokemon: async (root, args, ctx) => {
+      console.log('hit');
       let pokemons = [];
       let offset = args.offset;
 
@@ -36,17 +41,9 @@ module.exports = {
       };
 
       // check if redis contains offset
+      const hasKey = await redisGet(offset.toString());
 
-      while (offset > 0) {
-        // get pokemons from set
-        const res = client.hget(offset);
-        pokemons = [...pokemons, ...res];
-        offset -= 20;
-      }
-
-      if (pokemons.length) {
-        return pokemons;
-      } else {
+      if (!hasKey) {
         const { results } = await P.getPokemonsList(interval);
 
         for (let result of results) {
@@ -64,11 +61,22 @@ module.exports = {
 
           pokemons.push(fullPokemon);
         }
-
-        // store batches by offset increments since the infinite scroll increases offset by 20
-        client.hset(args.offset, pokemons);
-        return pokemons;
+        await redisSet(offset.toString(), JSON.stringify(pokemons));
       }
+
+      // initial get, we dont need to loop to create a large list
+      if (offset === 0 && hasKey) {
+        return JSON.parse(hasKey);
+      } else {
+        let index = 0;
+        while (index <= offset) {
+          // get pokemons from set
+          const res = await redisGet(index.toString());
+          pokemons = [...pokemons, ...JSON.parse(res)];
+          index += 20;
+        }
+      }
+      return pokemons;
     },
   },
 };

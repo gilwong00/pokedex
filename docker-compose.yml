@@ -5,12 +5,13 @@ services:
     image: redis:latest
   api:
     build: 
+      dockerfile: Dockerfile
       context: ./server
     ports: 
       - "4000:4000"
     volumes: 
-      - /app/node_modules
-      - ./server:/app
+      - /pokedex/node_modules
+      - ./server:/pokedex
     environment: 
       - REDIS_HOST=redis
       - REDIS_PORT=6379

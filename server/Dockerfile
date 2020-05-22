@@ -1,5 +1,5 @@
-FROM node:12.18.0
-WORKDIR "/app"
+FROM node:12.16.2
+WORKDIR "/pokedex"
 COPY ./package.json ./
 RUN yarn
 COPY ./ ./
