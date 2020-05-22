@@ -1,29 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { View, StyleSheet, ActivityIndicator } from 'react-native';
-import { fetchPokemon } from '../store/actions/pokemon';
+import React, { useState } from 'react';
+import { View, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import PokemonList from '../components/Pokemon/PokemonList';
+import { FETCH_POKEMON } from '../graphql/queries';
+import { useQuery } from '@apollo/react-hooks';
 
 const HomeScreen = () => {
-  const [loading, setLoading] = useState(false);
   const [offset, setOffset] = useState(0);
-  const pokemons = useSelector((state) => state.pokemons.pokemons);
-  const dispatch = useDispatch();
+  const { loading, error, data } = useQuery(FETCH_POKEMON, {
+    variables: { offset },
+	});
+	
+	const loadMore = () => setOffset(prevState => setOffset(prevState += 20));
 
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      await dispatch(fetchPokemon(offset));
-      setLoading(false);
-    })();
-  }, []);
+  if (error) {
+    return Alert.alert(
+      'Error fetching data',
+      `${error.message}`[{ text: 'Okay' }]
+    );
+  }
 
   return (
     <View>
       {loading ? (
         <ActivityIndicator size='large' />
       ) : (
-        <PokemonList pokemons={pokemons} />
+        <PokemonList pokemons={data.fetchPokemon} loadMore={loadMore}/>
       )}
     </View>
   );

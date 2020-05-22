@@ -1,15 +1,11 @@
-const express = require('express');
-const cors = require('cors');
-const mogran = require('morgan');
-const PORT = process.env.PORT || 5000;
-const app = express();
+const { ApolloServer } = require('apollo-server');
+const typeDefs = require('./typeDefs');
+const resolvers = require('./resolvers');
 
-const pokemonController = require('./controllers/pokemonController');
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: async () => {},
+});
 
-app.use(mogran('combined'));
-app.use(cors());
-app.use(express.json());
-
-app.get('/api/pokemon', pokemonController.fetchPokemons);
-
-app.listen(PORT, () => console.log(`running on port ${PORT}`));
+server.listen().then(({ url }) => console.log(`listening on port ${url}`));
