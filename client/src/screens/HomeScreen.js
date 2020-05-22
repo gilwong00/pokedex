@@ -8,23 +8,27 @@ const HomeScreen = () => {
   const [offset, setOffset] = useState(0);
   const { loading, error, data } = useQuery(FETCH_POKEMON, {
     variables: { offset },
-	});
-	
-	const loadMore = () => setOffset(prevState => setOffset(prevState += 20));
+  });
 
-  if (error) {
-    return Alert.alert(
-      'Error fetching data',
-      `${error.message}`[{ text: 'Okay' }]
-    );
-  }
+  const loadMore = () => setOffset((prevState) => setOffset((prevState += 20)));
+
+  // if (error) {
+  //   return Alert.alert(
+  //     'Error fetching data',
+  //     `${error.message}`[{ text: 'Okay' }]
+  //   );
+  // }
 
   return (
     <View>
       {loading ? (
         <ActivityIndicator size='large' />
       ) : (
-        <PokemonList pokemons={data.fetchPokemon} loadMore={loadMore}/>
+        <PokemonList
+          pokemons={data.fetchPokemon}
+          loadMore={loadMore}
+          offset={offset}
+        />
       )}
     </View>
   );

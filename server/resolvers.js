@@ -3,10 +3,10 @@ const Pokedex = require('pokedex-promise-v2');
 const redis = require('redis');
 const P = new Pokedex();
 
-// const client = redis.createClient({
-//   host: process.env.REDIS_HOST,
-//   port: process.env.REDIS_PORT,
-// });
+const client = redis.createClient({
+  host: process.env.REDIS_HOST,
+  port: process.env.REDIS_PORT,
+});
 
 const BASE_URL = 'https://pokeapi.co/api/v2/pokemon';
 const BASE_POKEMON_IMAGE_URL =
@@ -27,31 +27,48 @@ function padId(id) {
 module.exports = {
   Query: {
     fetchPokemon: async (root, args, ctx) => {
+      let pokemons = [];
+      let offset = args.offset;
+
       const interval = {
         limit: 20,
-        offset: args.offset,
+        offset,
       };
 
-      const { results } = await P.getPokemonsList(interval);
+      // check if redis contains offset
 
-      let pokemons = [];
-
-      for (let result of results) {
-        const { data } = await axios.get(`${BASE_URL}/${result.name}`);
-        const fullPokemon = {
-          id: data.id,
-          name: data.name,
-          weight: data.weight,
-          height: data.height,
-          order: data.order,
-          image: `${BASE_POKEMON_IMAGE_URL}/${padId(data.id)}.png`,
-					type: data.types.map((t) => t.type.name),
-					captured: false
-        };
-
-        pokemons.push(fullPokemon);
+      while (offset > 0) {
+        // get pokemons from set
+        const res = client.hget(offset);
+        pokemons = [...pokemons, ...res];
+        offset -= 20;
       }
-      return pokemons;
+
+      if (pokemons.length) {
+        return pokemons;
+      } else {
+        const { results } = await P.getPokemonsList(interval);
+
+        for (let result of results) {
+          const { data } = await axios.get(`${BASE_URL}/${result.name}`);
+          const fullPokemon = {
+            id: data.id,
+            name: data.name,
+            weight: data.weight,
+            height: data.height,
+            order: data.order,
+            image: `${BASE_POKEMON_IMAGE_URL}/${padId(data.id)}.png`,
+            type: data.types.map((t) => t.type.name),
+            captured: false,
+          };
+
+          pokemons.push(fullPokemon);
+        }
+
+        // store batches by offset increments since the infinite scroll increases offset by 20
+        client.hset(args.offset, pokemons);
+        return pokemons;
+      }
     },
   },
 };

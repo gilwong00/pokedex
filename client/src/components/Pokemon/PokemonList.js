@@ -9,15 +9,15 @@ import {
 import PokemonItem from './PokemonItem';
 
 const PokemonList = ({ pokemons, loadMore }) => {
-  const [loading, setLoading] = useState(false);
-
+	const [loading, setLoading] = useState(false);
+	
   // turn this into a hook?
   const fetchMorePokemon = () => {
     setLoading(true);
     loadMore();
     setLoading(false);
   };
-
+	
   return (
     <View>
       <FlatList
