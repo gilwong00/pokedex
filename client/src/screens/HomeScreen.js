@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ActivityIndicator, Alert } from 'react-native';
-import PokemonList from '../components/Pokemon/PokemonList';
+import { View, Alert, Platform } from 'react-native';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { FETCH_POKEMON } from '../graphql/queries';
 import { useQuery } from '@apollo/react-hooks';
+import CustomHeaderButton from '../components/UI/CustomHeaderButton';
+import PokemonList from '../components/Pokemon/PokemonList';
 
 const HomeScreen = () => {
   const [offset, setOffset] = useState(0);
@@ -12,36 +14,44 @@ const HomeScreen = () => {
   });
 
   const loadMore = () => {
-		setOffset((prevState) => {
+    setOffset((prevState) => {
       return prevState === 0 ? (prevState += 22) : (prevState += 21);
-		});
-		
-		setGroup(prevState => prevState += 1);
-	}
-    
+    });
+
+    setGroup((prevState) => (prevState += 1));
+  };
 
   if (error) {
-    return Alert.alert(
-      'Error fetching data',
-      `${error.message}`[{ text: 'Okay' }]
-    );
+    Alert.alert('Error fetching data', `${error.message}`, [{ text: 'Okay' }]);
   }
-	
+
   return (
     <View>
-      {loading ? (
-        <ActivityIndicator size='large' />
-      ) : (
+      {data && data.fetchPokemon && (
         <PokemonList
           pokemons={data.fetchPokemon}
           loadMore={loadMore}
           offset={offset}
+          loading={loading}
         />
       )}
     </View>
   );
 };
 
-export default HomeScreen;
+HomeScreen.navigationOptions = ({ navigation }) => {
+  return {
+    headerTitle: 'Pokedex',
+    headerLeft: () => (
+      <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+        <Item
+          title='Menu'
+          iconName={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'}
+          onPress={() => navigation.toggleDrawer()}
+        />
+      </HeaderButtons>
+    ),
+  };
+};
 
-const styles = StyleSheet.create({});
+export default HomeScreen;

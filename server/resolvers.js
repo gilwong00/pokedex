@@ -68,10 +68,10 @@ module.exports = {
         let results = [];
 
         for (let i = group; i > 0; i--) {
-          const res = await redisGet(i.toString());
-          results = [...JSON.parse(res), ...results];
+					const res = await redisGet(i.toString());
+					results = [...JSON.parse(res), ...results];
         }
-        return [...results, ...pokemons];
+        return results;
       }
     },
   },

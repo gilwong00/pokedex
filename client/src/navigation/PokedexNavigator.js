@@ -24,20 +24,6 @@ const CapturedNavigator = createStackNavigator(
   }
 );
 
-const KantoNavigator = createStackNavigator(
-  {
-    Kanto: KantoScreen,
-  },
-  { defaultNavigationOptions }
-);
-
-const JohtoNavigator = createStackNavigator(
-  {
-    Johto: JohtoScreen,
-  },
-  { defaultNavigationOptions }
-);
-
 const HomeNavigator = createStackNavigator(
   {
     Home: HomeScreen,
@@ -49,8 +35,6 @@ const MainNavigator = createDrawerNavigator(
   {
     Home: HomeNavigator,
     'My Pokemon': CapturedNavigator,
-    // Kanto: KantoNavigator,
-    // Johto: JohtoNavigator,
   },
   {
     defaultNavigationOptions,

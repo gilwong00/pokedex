@@ -8,16 +8,7 @@ import {
 } from 'react-native';
 import PokemonItem from './PokemonItem';
 
-const PokemonList = ({ pokemons, loadMore }) => {
-	const [loading, setLoading] = useState(false);
-	
-  // turn this into a hook?
-  const fetchMorePokemon = () => {
-    setLoading(true);
-    loadMore();
-    setLoading(false);
-  };
-	
+const PokemonList = ({ pokemons, loadMore, loading }) => {
   return (
     <View>
       <FlatList
@@ -26,9 +17,15 @@ const PokemonList = ({ pokemons, loadMore }) => {
         renderItem={({ item }) => (
           <PokemonItem item={item} onSelect={() => {}} />
         )}
-        onEndReached={fetchMorePokemon}
+        onEndReached={loadMore}
         onEndReachedThreshold={0}
-        ListEmptyComponent={loading ? <ActivityIndicator size='large' /> : null}
+        ListFooterComponent={
+          loading ? (
+            <View style={styles.loader}>
+              <ActivityIndicator size='large' color='red' />
+            </View>
+          ) : null
+        }
       />
     </View>
   );
@@ -36,4 +33,9 @@ const PokemonList = ({ pokemons, loadMore }) => {
 
 export default PokemonList;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  loader: {
+    marginTop: 10,
+    alignItems: 'center',
+  },
+});
