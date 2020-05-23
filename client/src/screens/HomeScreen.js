@@ -6,19 +6,27 @@ import { useQuery } from '@apollo/react-hooks';
 
 const HomeScreen = () => {
   const [offset, setOffset] = useState(0);
+  const [group, setGroup] = useState(1);
   const { loading, error, data } = useQuery(FETCH_POKEMON, {
-    variables: { offset },
+    variables: { offset, group },
   });
 
-  const loadMore = () => setOffset((prevState) => setOffset((prevState += 20)));
+  const loadMore = () => {
+		setOffset((prevState) => {
+      return prevState === 0 ? (prevState += 22) : (prevState += 21);
+		});
+		
+		setGroup(prevState => prevState += 1);
+	}
+    
 
-  // if (error) {
-  //   return Alert.alert(
-  //     'Error fetching data',
-  //     `${error.message}`[{ text: 'Okay' }]
-  //   );
-  // }
-
+  if (error) {
+    return Alert.alert(
+      'Error fetching data',
+      `${error.message}`[{ text: 'Okay' }]
+    );
+  }
+	
   return (
     <View>
       {loading ? (

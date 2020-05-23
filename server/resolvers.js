@@ -31,17 +31,15 @@ function padId(id) {
 module.exports = {
   Query: {
     fetchPokemon: async (root, args, ctx) => {
-      console.log('hit');
       let pokemons = [];
-      let offset = args.offset;
+      const { offset, group } = args;
 
       const interval = {
         limit: 20,
         offset,
       };
 
-      // check if redis contains offset
-      const hasKey = await redisGet(offset.toString());
+      const hasKey = await redisGet(group.toString());
 
       if (!hasKey) {
         const { results } = await P.getPokemonsList(interval);
@@ -61,22 +59,20 @@ module.exports = {
 
           pokemons.push(fullPokemon);
         }
-        await redisSet(offset.toString(), JSON.stringify(pokemons));
+        await redisSet(group.toString(), JSON.stringify(pokemons));
       }
 
-      // initial get, we dont need to loop to create a large list
-      if (offset === 0 && hasKey) {
-        return JSON.parse(hasKey);
+      if (group === 1 && !hasKey) {
+        return pokemons;
       } else {
-        let index = 0;
-        while (index <= offset) {
-          // get pokemons from set
-          const res = await redisGet(index.toString());
-          pokemons = [...pokemons, ...JSON.parse(res)];
-          index += 20;
+        let results = [];
+
+        for (let i = group; i > 0; i--) {
+          const res = await redisGet(i.toString());
+          results = [...JSON.parse(res), ...results];
         }
+        return [...results, ...pokemons];
       }
-      return pokemons;
     },
   },
 };

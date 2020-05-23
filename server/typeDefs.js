@@ -12,7 +12,7 @@ module.exports = gql`
 	}
 
 	type Query {
-		fetchPokemon(offset: Int!): [Pokemon!]
+		fetchPokemon(offset: Int!, group: Int!): [Pokemon!]
 	}
 
 	type Mutation {

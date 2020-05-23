@@ -49,8 +49,8 @@ const MainNavigator = createDrawerNavigator(
   {
     Home: HomeNavigator,
     'My Pokemon': CapturedNavigator,
-    Kanto: KantoNavigator,
-    Johto: JohtoNavigator,
+    // Kanto: KantoNavigator,
+    // Johto: JohtoNavigator,
   },
   {
     defaultNavigationOptions,
