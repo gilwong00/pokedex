@@ -5,11 +5,32 @@ export const FETCH_POKEMON = gql`
     fetchPokemon(offset: $offset, group: $group) {
       id
       name
-			weight
-			height
-			image
-			type 
-			captured
+      weight
+      height
+      image
+      type
+      captured
+    }
+  }
+`;
+
+export const GET_POKEMON_DETAILS = gql`
+  query($name: String!) {
+    getPokemonDetails(name: $name) {
+      id
+      name
+      weight
+      height
+      image
+      type
+      captured
+      stats {
+        base_stat
+        effort
+        stat {
+          name
+        }
+      }
     }
   }
 `;

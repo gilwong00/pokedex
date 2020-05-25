@@ -17,7 +17,7 @@ const BASE_POKEMON_IMAGE_URL =
   'https://assets.pokemon.com/assets/cms2/img/pokedex/detail';
 
 function padId(id) {
-  id = parseInt(id, 10);
+  id = parseInt(id);
 
   if (id < 10) {
     return `00${id}`;
@@ -68,11 +68,30 @@ module.exports = {
         let results = [];
 
         for (let i = group; i > 0; i--) {
-					const res = await redisGet(i.toString());
-					results = [...JSON.parse(res), ...results];
+          const res = await redisGet(i.toString());
+          results = [...JSON.parse(res), ...results];
         }
         return results;
       }
+    },
+    getPokemonDetails: async (_, args) => {
+      const { name } = args;
+      const { data } = await axios.get(`${BASE_URL}/${name}`);
+
+      const res = {
+        id: data.id,
+        name: data.name,
+        weight: data.weight,
+        height: data.height,
+        order: data.order,
+        image: `${BASE_POKEMON_IMAGE_URL}/${padId(data.id)}.png`,
+        type: data.types.map((t) => t.type.name),
+        captured: false,
+        stats: data.stats.sort((a, b) => (a.stat.name > b.stat.name ? 1 : -1)),
+      };
+
+      // set redis cache
+      return res;
     },
   },
 };

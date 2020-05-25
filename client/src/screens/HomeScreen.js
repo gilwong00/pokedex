@@ -6,7 +6,7 @@ import { useQuery } from '@apollo/react-hooks';
 import CustomHeaderButton from '../components/UI/CustomHeaderButton';
 import PokemonList from '../components/Pokemon/PokemonList';
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
   const [offset, setOffset] = useState(0);
   const [group, setGroup] = useState(1);
   const { loading, error, data } = useQuery(FETCH_POKEMON, {
@@ -32,7 +32,8 @@ const HomeScreen = () => {
           pokemons={data.fetchPokemon}
           loadMore={loadMore}
           offset={offset}
-          loading={loading}
+					loading={loading}
+					navigation={navigation}
         />
       )}
     </View>

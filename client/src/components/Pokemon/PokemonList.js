@@ -8,14 +8,17 @@ import {
 } from 'react-native';
 import PokemonItem from './PokemonItem';
 
-const PokemonList = ({ pokemons, loadMore, loading }) => {
+const PokemonList = ({ pokemons, loadMore, loading, navigation }) => {
+  const navigateToDetails = (pokemon) =>
+    navigation.navigate('Pokemon', { name: pokemon.name });
+
   return (
     <View>
       <FlatList
         data={pokemons}
         keyExtractor={(item) => item.name}
         renderItem={({ item }) => (
-          <PokemonItem item={item} onSelect={() => {}} />
+          <PokemonItem item={item} onSelect={() => navigateToDetails(item)} />
         )}
         onEndReached={loadMore}
         onEndReachedThreshold={0}
@@ -35,7 +38,6 @@ export default PokemonList;
 
 const styles = StyleSheet.create({
   loader: {
-    marginTop: 10,
     alignItems: 'center',
   },
 });

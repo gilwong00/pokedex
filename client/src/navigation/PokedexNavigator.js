@@ -4,9 +4,8 @@ import { createDrawerNavigator } from 'react-navigation-drawer';
 
 //Screens
 import CapturedScreen from '../screens/CapturedScreen';
-import KantoScreen from '../screens/KantoScreen';
-import JohtoScreen from '../screens/JohtoScreen';
 import HomeScreen from '../screens/HomeScreen';
+import PokemonScreen from '../screens/PokemonScreen';
 
 const defaultNavigationOptions = {
   headerStyle: {
@@ -27,6 +26,7 @@ const CapturedNavigator = createStackNavigator(
 const HomeNavigator = createStackNavigator(
   {
     Home: HomeScreen,
+    Pokemon: PokemonScreen,
   },
   { defaultNavigationOptions }
 );
