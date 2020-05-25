@@ -23,11 +23,11 @@ const PokemonList = ({ pokemons, loadMore, loading, navigation }) => {
         onEndReached={loadMore}
         onEndReachedThreshold={0}
         ListFooterComponent={
-          loading ? (
+          loading && (
             <View style={styles.loader}>
               <ActivityIndicator size='large' color='red' />
             </View>
-          ) : null
+          )
         }
       />
     </View>

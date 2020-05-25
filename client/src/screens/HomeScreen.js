@@ -22,7 +22,15 @@ const HomeScreen = ({ navigation }) => {
   };
 
   if (error) {
-    Alert.alert('Error fetching data', `${error.message}`, [{ text: 'Okay' }]);
+    Alert.alert('Error fetching data', `${error.message}`, [
+      {
+        text: 'Okay',
+        onPress: () => {
+          setOffset(0);
+          setGroup(1);
+        },
+      },
+    ]);
   }
 
   return (
@@ -32,8 +40,8 @@ const HomeScreen = ({ navigation }) => {
           pokemons={data.fetchPokemon}
           loadMore={loadMore}
           offset={offset}
-					loading={loading}
-					navigation={navigation}
+          loading={loading}
+          navigation={navigation}
         />
       )}
     </View>

@@ -31,47 +31,49 @@ function padId(id) {
 module.exports = {
   Query: {
     fetchPokemon: async (root, args, ctx) => {
-      let pokemons = [];
-      const { offset, group } = args;
+      try {
+        let pokemons = [];
+        const { offset, group } = args;
 
-      const interval = {
-        limit: 20,
-        offset,
-      };
+        const interval = {
+          limit: 20,
+          offset,
+        };
 
-      const hasKey = await redisGet(group.toString());
+        const hasKey = await redisGet(group.toString());
 
-      if (!hasKey) {
-        const { results } = await P.getPokemonsList(interval);
+        if (!hasKey) {
+          const { results } = await P.getPokemonsList(interval);
 
-        for (let result of results) {
-          const { data } = await axios.get(`${BASE_URL}/${result.name}`);
-          const fullPokemon = {
-            id: data.id,
-            name: data.name,
-            weight: data.weight,
-            height: data.height,
-            order: data.order,
-            image: `${BASE_POKEMON_IMAGE_URL}/${padId(data.id)}.png`,
-            type: data.types.map((t) => t.type.name),
-            captured: false,
-          };
+          for (let result of results) {
+            const { data } = await axios.get(`${BASE_URL}/${result.name}`);
+            const fullPokemon = {
+              id: data.id,
+              name: data.name,
+              image: `${BASE_POKEMON_IMAGE_URL}/${padId(data.id)}.png`,
+            };
 
-          pokemons.push(fullPokemon);
+            pokemons.push(fullPokemon);
+          }
+          await redisSet(group.toString(), JSON.stringify(pokemons));
         }
-        await redisSet(group.toString(), JSON.stringify(pokemons));
-      }
 
-      if (group === 1 && !hasKey) {
-        return pokemons;
-      } else {
-        let results = [];
+        if (group === 1 && !hasKey) {
+          return pokemons;
+        } else {
+          let results = [];
 
-        for (let i = group; i > 0; i--) {
-          const res = await redisGet(i.toString());
-          results = [...JSON.parse(res), ...results];
+          for (let i = group; i > 0; i--) {
+            const res = await redisGet(i.toString());
+
+            if (res) {
+              results = [...JSON.parse(res), ...results];
+            }
+          }
+          return results;
         }
-        return results;
+      } catch (err) {
+        return err;
       }
     },
     getPokemonDetails: async (_, args) => {
@@ -85,7 +87,9 @@ module.exports = {
         height: data.height,
         order: data.order,
         image: `${BASE_POKEMON_IMAGE_URL}/${padId(data.id)}.png`,
-        type: data.types.map((t) => t.type.name),
+        type: data.types.map(
+          (t) => t.type.name.charAt(0).toUpperCase() + t.type.name.slice(1)
+        ),
         captured: false,
         stats: data.stats.sort((a, b) => (a.stat.name > b.stat.name ? 1 : -1)),
       };

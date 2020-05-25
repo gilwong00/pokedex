@@ -5,11 +5,7 @@ export const FETCH_POKEMON = gql`
     fetchPokemon(offset: $offset, group: $group) {
       id
       name
-      weight
-      height
       image
-      type
-      captured
     }
   }
 `;
