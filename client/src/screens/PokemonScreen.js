@@ -50,6 +50,16 @@ const Pokemon = ({ navigation }) => {
               text={data.getPokemonDetails.type.join(', ')}
             />
           </View>
+          <View style={styles.detailsContainer}>
+            <Text style={styles.statHeader}>Stats:</Text>
+            {data.getPokemonDetails.stats.map((stat) => (
+              <Detail
+                label={stat.stat.name}
+                text={stat.base_stat}
+                key={stat.stat.name}
+              />
+            ))}
+          </View>
           <View>
             <Button title='Try to Capture' color='red' />
           </View>
@@ -71,7 +81,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: 'white',
     paddingTop: 20,
-    height: 700,
+    height: '100%',
   },
   name: {
     fontWeight: 'bold',
@@ -93,4 +103,16 @@ const styles = StyleSheet.create({
     width: '70%',
     left: 70,
   },
+  statHeader: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 15,
+  },
+  // statsContainer: {
+  //   display: 'flex',
+  //   flexDirection: 'row',
+  //   justifyContent: 'space-between',
+  // 	paddingHorizontal: 10,
+  // 	paddingVertical: 5
+  // },
 });
