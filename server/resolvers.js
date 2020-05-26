@@ -1,3 +1,4 @@
+const { BASE_URL, BASE_POKEMON_IMAGE_URL } = require('./constants');
 const axios = require('axios');
 const Pokedex = require('pokedex-promise-v2');
 const redis = require('redis');
@@ -12,10 +13,9 @@ const client = redis.createClient({
 
 const redisGet = promisify(client.get).bind(client);
 const redisSet = promisify(client.set).bind(client);
-
-const BASE_URL = 'https://pokeapi.co/api/v2/pokemon';
-const BASE_POKEMON_IMAGE_URL =
-  'https://assets.pokemon.com/assets/cms2/img/pokedex/detail';
+const redisExist = promisify(client.exists).bind(client);
+const redisSMember = promisify(client.smembers).bind(client);
+// const redisSAdd = promisify(client.sadd).bind(client);
 
 module.exports = {
   Query: {
@@ -29,7 +29,7 @@ module.exports = {
           offset,
         };
 
-        const hasKey = await redisGet(group.toString());
+        const hasKey = await redisExist(group.toString());
 
         if (!hasKey) {
           const { results } = await P.getPokemonsList(interval);
@@ -86,6 +86,33 @@ module.exports = {
 
       // set redis cache
       return res;
+    },
+    getCapturedPokemon: async () => {
+      try {
+        const captured = await redisSMember('captured');
+        const parsed = JSON.parse(captured);
+
+        if (Array.isArray(parsed)) {
+          return parsed;
+        } else {
+          return [parsed];
+        }
+      } catch (err) {
+        throw err;
+      }
+    },
+  },
+  Mutation: {
+    capturePokemon: (_, args) => {
+      const capturedPokemon = { ...args.pokemon, captured: true };
+      // maybe add a set size?
+      return client.sadd('captured', JSON.stringify(capturedPokemon), (err) => {
+        if (err) {
+          return err;
+        } else {
+          return res;
+        }
+      });
     },
   },
 };

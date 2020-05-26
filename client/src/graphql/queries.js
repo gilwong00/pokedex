@@ -30,3 +30,16 @@ export const GET_POKEMON_DETAILS = gql`
     }
   }
 `;
+
+export const GET_CAPTURED_POKEMON = gql`
+	query {
+		getCapturedPokemon {
+			id
+			name
+			height
+			weight
+			image
+			type
+		}
+	}
+`;

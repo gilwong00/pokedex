@@ -31,12 +31,23 @@ module.exports = gql`
     stats: [Stats]
   }
 
+	input PokemonInput {
+		id: Int
+    name: String
+    weight: Int
+    height: Float
+    image: String
+    type: [String]
+    captured: Boolean
+	}
+
   type Query {
     fetchPokemon(offset: Int!, group: Int!): [Pokemon!]
-    getPokemonDetails(name: String!): PokemonDetails
+    getPokemonDetails(name: String!): PokemonDetails!,
+		getCapturedPokemon: [PokemonDetails!]
   }
 
   type Mutation {
-    capturePokemon: [Pokemon]
+    capturePokemon(pokemon: PokemonInput!): Boolean!
   }
 `;
