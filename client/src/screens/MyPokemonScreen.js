@@ -3,7 +3,7 @@ import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { StyleSheet, Text, View, Platform } from 'react-native';
 import CustomHeaderButton from '../components/UI/CustomHeaderButton';
 
-const CapturedScreen = ({ navigation }) => {
+const MyPokemonScreen = ({ navigation }) => {
   return (
     <View>
       <Text>Pokemon I've captured</Text>
@@ -11,7 +11,7 @@ const CapturedScreen = ({ navigation }) => {
   );
 };
 
-CapturedScreen.navigationOptions = ({ navigation }) => {
+MyPokemonScreen.navigationOptions = ({ navigation }) => {
   return {
     headerTitle: 'My Pokemon',
     headerLeft: () => (
@@ -26,6 +26,6 @@ CapturedScreen.navigationOptions = ({ navigation }) => {
   };
 };
 
-export default CapturedScreen;
+export default MyPokemonScreen;
 
 const styles = StyleSheet.create({});

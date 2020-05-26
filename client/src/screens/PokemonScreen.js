@@ -18,17 +18,21 @@ const Pokemon = ({ navigation }) => {
     variables: { name },
   });
 
+  const navigateToCaptureScreen = () =>
+    navigation.navigate('CapturePokemon', { pokemon: data.getPokemonDetails });
+
   if (error) {
     Alert.alert(`Error getting details for ${name}`, error.message, [
       { text: 'Okay', onPress: () => navigation.goBack() },
     ]);
   }
+
   return (
     <View>
       {loading ? (
         <ActivityIndicator size='large' color='red' />
       ) : (
-        <View style={styles.card}>
+        <View style={styles.screen}>
           <Text style={styles.name}>
             {data.getPokemonDetails.name.charAt(0).toUpperCase() +
               data.getPokemonDetails.name.slice(1)}
@@ -60,9 +64,15 @@ const Pokemon = ({ navigation }) => {
               />
             ))}
           </View>
-          <View>
-            <Button title='Try to Capture' color='red' />
-          </View>
+          {!data.getPokemonDetails.captured && (
+            <View>
+              <Button
+                title='Try to Capture'
+                color='red'
+                onPress={navigateToCaptureScreen}
+              />
+            </View>
+          )}
         </View>
       )}
     </View>
@@ -72,15 +82,7 @@ const Pokemon = ({ navigation }) => {
 export default Pokemon;
 
 const styles = StyleSheet.create({
-  card: {
-    shadowColor: 'black',
-    shadowOpacity: 0.26,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 8,
-    elevation: 5,
-    borderRadius: 10,
-    backgroundColor: 'white',
-    paddingTop: 20,
+  screen: {
     height: '100%',
   },
   name: {

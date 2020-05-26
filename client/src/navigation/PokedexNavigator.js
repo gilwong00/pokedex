@@ -3,9 +3,10 @@ import { createStackNavigator } from 'react-navigation-stack';
 import { createDrawerNavigator } from 'react-navigation-drawer';
 
 //Screens
-import CapturedScreen from '../screens/CapturedScreen';
+import MyPokemon from '../screens/MyPokemonScreen';
 import HomeScreen from '../screens/HomeScreen';
 import PokemonScreen from '../screens/PokemonScreen';
+import CapturePokemonScreen from '../screens/CapturePokemonScreen';
 
 const defaultNavigationOptions = {
   headerStyle: {
@@ -14,9 +15,9 @@ const defaultNavigationOptions = {
   headerTintColor: '#fff',
 };
 
-const CapturedNavigator = createStackNavigator(
+const PokemonNavigator = createStackNavigator(
   {
-    Captured: CapturedScreen,
+    'My Pokemon': MyPokemon,
   },
   {
     defaultNavigationOptions,
@@ -25,8 +26,9 @@ const CapturedNavigator = createStackNavigator(
 
 const HomeNavigator = createStackNavigator(
   {
-    Home: HomeScreen,
-    Pokemon: PokemonScreen,
+		Home: HomeScreen,
+		Pokemon: PokemonScreen,
+    CapturePokemon: CapturePokemonScreen,
   },
   { defaultNavigationOptions }
 );
@@ -34,7 +36,7 @@ const HomeNavigator = createStackNavigator(
 const MainNavigator = createDrawerNavigator(
   {
     Home: HomeNavigator,
-    'My Pokemon': CapturedNavigator,
+    'My Pokemon': PokemonNavigator,
   },
   {
     defaultNavigationOptions,
