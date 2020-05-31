@@ -38,7 +38,6 @@ module.exports = gql`
     height: Float
     image: String
     type: [String]
-    captured: Boolean
 	}
 
   type Query {

@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Button, Image, Alert } from 'react-native';
 import { useMutation } from '@apollo/react-hooks';
+import { CAPTURE_POKEMON } from '../graphql/mutations';
 
 const CapturePokemonScreen = ({ navigation }) => {
   const [attempts, setAttempts] = useState(3);
   const pokemon = navigation.getParam('pokemon');
+  const [capturePokemon] = useMutation(CAPTURE_POKEMON);
 
-  const getRandomNumber = () => Math.floor(Math.random() * 100) + 1;
+  const getRandomNumber = (hp) => Math.floor(Math.random() * (hp + 10)) + 1;
 
-  const capturePokemon = () => {
+  const capture = () => {
     if (attempts === 0) {
-      Alert.alert('No more attempts', 'Please try again in 5 minutes', [
+      Alert.alert('No more attempts', 'Please try again', [
         { text: 'Ok', onPress: () => navigation.goBack() },
       ]);
     }
@@ -19,7 +21,7 @@ const CapturePokemonScreen = ({ navigation }) => {
       pokemon.stats.find((stat) => stat.stat.name.toLowerCase() === 'hp') ||
       getRandomNumber();
 
-    if (pokemonHp > getRandomNumber()) {
+    if (pokemonHp > getRandomNumber(pokemonHp)) {
       Alert.alert(`Failed to capture ${pokemon.name}`, 'Want to try again?', [
         { text: 'No', onPress: () => navigation.goBack() },
         {
@@ -34,7 +36,18 @@ const CapturePokemonScreen = ({ navigation }) => {
         {
           text: 'Ok',
           onPress: () => {
-            // call mutation
+            capturePokemon({
+              variables: {
+                id: pokemon.id,
+                name: pokemon.name,
+                weight: pokemon.weight,
+                height: pokemon.height,
+                image: pokemon.image,
+                type: pokemon.type,
+              },
+            });
+
+            navigation.goBack();
           },
         },
       ]);
@@ -52,7 +65,7 @@ const CapturePokemonScreen = ({ navigation }) => {
         </Text>
       </View>
       <View>
-        <Button title='Capture!' color='red' onPress={capturePokemon} />
+        <Button title='Capture!' color='red' onPress={capture} />
       </View>
     </View>
   );

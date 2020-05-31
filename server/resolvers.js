@@ -110,7 +110,7 @@ module.exports = {
         if (err) {
           return err;
         } else {
-          return res;
+          return true;
         }
       });
     },

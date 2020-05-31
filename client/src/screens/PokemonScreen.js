@@ -64,7 +64,7 @@ const Pokemon = ({ navigation }) => {
               />
             ))}
           </View>
-          {!data.getPokemonDetails.captured && (
+          {/* {!data.getPokemonDetails.captured && (
             <View>
               <Button
                 title='Try to Capture'
@@ -72,7 +72,7 @@ const Pokemon = ({ navigation }) => {
                 onPress={navigateToCaptureScreen}
               />
             </View>
-          )}
+          )} */}
         </View>
       )}
     </View>

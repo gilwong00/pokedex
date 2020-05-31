@@ -8,7 +8,6 @@ export const CAPTURE_POKEMON = gql`
     $height: Int!
     $image: String!
     $type: [String!]
-    $captured: Boolean
   ) {
     capturePokemon(pokemon: {
 			id: $id,
@@ -17,7 +16,6 @@ export const CAPTURE_POKEMON = gql`
 			height: $height,
 			image: $image,
 			type: $type,
-			captured: $captured
 		})
   }
 `;
