@@ -36,7 +36,7 @@ const HomeNavigator = createStackNavigator(
 const MainNavigator = createDrawerNavigator(
   {
     Home: HomeNavigator,
-    'My Pokemon': PokemonNavigator,
+    // 'My Pokemon': PokemonNavigator,
   },
   {
     defaultNavigationOptions,
